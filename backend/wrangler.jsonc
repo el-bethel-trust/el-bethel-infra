@@ -11,7 +11,7 @@
 	"triggers": {
 		"crons": [
 			"*/15 * * * *", // 15 minute period unlocker
-			"32 1 * * *", // post prayer session task
+			"57 1 * * *", // post prayer session task
 			"32 14 * * *", // post bible session task
 			"31 18 * * *", // send daily verse
 			"35 18 * * *" // send wishes
