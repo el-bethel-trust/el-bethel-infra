@@ -1,0 +1,36 @@
+{
+  "name": "El-Bethel Admin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:web": "rsbuild build",
+    "build:android": "pnpm sync && cap build android",
+    "run:android": "pnpm sync && cap run android",
+    "sync": "pnpm build:web && cap copy && cap sync",
+    "check": "biome check --write",
+    "dev": "rsbuild dev",
+    "format": "biome format --write",
+    "lint": "biome lint --write",
+    "preview": "rsbuild preview"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.3.0",
+    "@capacitor/cli": "^7.3.0",
+    "@capacitor/core": "^7.3.0",
+    "@capacitor/toast": "^7.0.1",
+    "@ionic/pwa-elements": "^3.3.0",
+    "axios": "^1.9.0",
+    "lucide-preact": "^0.513.0",
+    "preact": "^10.26.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@capacitor/assets": "^3.0.5",
+    "@rsbuild/core": "^1.3.15",
+    "@rsbuild/plugin-preact": "^1.3.1",
+    "@tailwindcss/postcss": "^4.1.8",
+    "tailwindcss": "^4.1.8",
+    "typescript": "^5.8.3"
+  }
+}

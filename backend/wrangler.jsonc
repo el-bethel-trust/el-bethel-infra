@@ -1,0 +1,28 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "el-bethel-backend",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-06-02",
+	"compatibility_flags": ["nodejs_compat"],
+	"assets": {
+		"directory": "./public/",
+		"binding": "ASSETS"
+	},
+	"triggers": {
+		"crons": [
+			"*/15 * * * *", // 15 minute period unlocker
+			"32 1 * * *", // post prayer session task
+			"32 14 * * *", // post bible session task
+			"31 18 * * *", // send daily verse
+			"35 18 * * *" // send wishes
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "el-bethel",
+			"database_id": "522e9de7-bcbb-4fa4-9489-b64ed8270604",
+			"migrations_dir": "./migrations"
+		}
+	]
+}

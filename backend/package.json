@@ -1,0 +1,27 @@
+{
+	"name": "backend",
+	"scripts": {
+		"dev": "wrangler dev --test-scheduled",
+		"deploy": "wrangler deploy --minify",
+		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
+		"generate-migrations": "drizzle-kit generate",
+		"migrate:local": "wrangler d1 migrations apply el-bethel --local",
+		"migrate:remote": "wrangler d1 migrations apply el-bethel --remote",
+		"studio": "drizzle-kit studio --config=drizzle-dev.config.ts",
+		"format": "biome format --write .",
+		"lint": "biome lint --write ."
+	},
+	"dependencies": {
+		"@hono/sentry": "^1.2.2",
+		"drizzle-orm": "^0.44.1",
+		"hono": "^4.7.11",
+		"loglevel": "^1.9.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@libsql/client": "^0.15.8",
+		"@types/node": "^22.15.29",
+		"drizzle-kit": "^0.31.1",
+		"wrangler": "^4.4.0"
+	}
+}
