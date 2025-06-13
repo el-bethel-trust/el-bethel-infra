@@ -10,8 +10,10 @@ import {
   // findMembersWithAnniversary,
 } from "./db/queries";
 import { getCurrentDateIST } from "./utils";
-import { composeSMS, sendBulkSMS, sendSMS } from "./sms";
-import type { Stream } from "./types";
+import { composeSMS, sendBulkSMS } from "./sms";
+import { env } from "cloudflare:workers";
+
+const BULKSMS_PROXY_URL = env.BULKSMS_PROXY_URL;
 
 export const postHolyPeriodTask = async () => {
   const absentees = await findAbsentees();
@@ -21,66 +23,47 @@ export const postHolyPeriodTask = async () => {
   await bulkLockMembers(absenteeIds);
   await wipeAttendanceTimes();
 
-  const individualLimit = 35;
-  const promises: Promise<any>[] = [];
-
-  const individualAbsentees = absentees.slice(0, individualLimit);
-  const bulkAbsentees = absentees.slice(individualLimit);
-
-  for (const person of individualAbsentees) {
-    const message = composeSMS.lock(person.stream, person.name);
-    promises.push(sendSMS(message, person.phone));
-  }
-
-  const streamGroups: Partial<Record<Stream, string[]>> = {};
-
-  for (const person of bulkAbsentees) {
-    if (!streamGroups[person.stream]) {
-      streamGroups[person.stream] = [];
-    }
-    streamGroups[person.stream]!.push(person.phone);
-  }
-
-  for (const stream of Object.keys(streamGroups) as Stream[]) {
-    const phones = streamGroups[stream]!;
-    const message = composeSMS.lock(stream, "");
-    promises.push(sendBulkSMS(message, phones));
-  }
-
-  // TODO: handle failures here?
-  const _responses = await Promise.allSettled(promises);
+  const sendLockSMS = await fetch(`${BULKSMS_PROXY_URL}/bulk-lock`, {
+    method: "POST",
+    body: JSON.stringify({
+      members: absenteeIds,
+    }),
+  });
+  const response = await sendLockSMS.text();
+  log.debug(response);
 };
 
 const batchUnlockMembersTask = async () => {
   const unlockedMembers = await consumeLockQueue();
+  if (unlockedMembers.length === 0) return;
 
-  const individualLimit = 35; // maybe adjust this???
-  const promises: Promise<any>[] = [];
+  const sendUnlockSMS = await fetch(`${BULKSMS_PROXY_URL}/bulk-unlock`, {
+    method: "POST",
+    body: JSON.stringify({
+      members: unlockedMembers,
+    }),
+  });
+  const response = await sendUnlockSMS.text();
+  log.debug(response);
+};
 
-  const individualMembers = unlockedMembers.slice(0, individualLimit);
-  const bulkMembers = unlockedMembers.slice(individualLimit);
+const sendWishes = async () => {
+  const currentISTDate = getCurrentDateIST().slice(5);
+  const membersWithBirthday = await findMembersWithBirthday(currentISTDate);
+  if (membersWithBirthday.length === 0) return;
 
-  for (const member of individualMembers) {
-    const message = composeSMS.unlock(member.stream, member.phone);
-    promises.push(sendSMS(message, member.phone));
-  }
-  const streamGroups: Partial<Record<Stream, string[]>> = {};
+  const sendUnlockSMS = await fetch(`${BULKSMS_PROXY_URL}/bulk-birthday`, {
+    method: "POST",
+    body: JSON.stringify({
+      members: membersWithBirthday,
+    }),
+  });
+  const response = await sendUnlockSMS.text();
+  log.debug(response);
 
-  for (const member of bulkMembers) {
-    if (!streamGroups[member.stream]) {
-      streamGroups[member.stream] = [];
-    }
-    streamGroups[member.stream]!.push(member.phone);
-  }
-
-  for (const stream of Object.keys(streamGroups) as Stream[]) {
-    const phones = streamGroups[stream]!;
-    const message = composeSMS.unlock(stream, "phone number");
-    promises.push(sendBulkSMS(message, phones));
-  }
-
-  // TODO: handle these failures maybe?
-  const _responses = await Promise.allSettled(promises);
+  // const membersWithAnniversary =
+  //   await findMembersWithAnniversary(currentISTDate);
+  // TODO: send wishes for marriage anniversary
 };
 
 const sendDailyVerses = async () => {
@@ -137,38 +120,6 @@ const sendDailyVerses = async () => {
 
   // TODO: maybe handle the failures?
   const _responses = await Promise.allSettled(promises);
-};
-
-const sendWishes = async () => {
-  const currentISTDate = getCurrentDateIST().slice(5);
-  const membersWithBirthday = await findMembersWithBirthday(currentISTDate);
-
-  // const membersWithAnniversary =
-  //   await findMembersWithAnniversary(currentISTDate);
-
-  // NOTE: only 50 subrequests can be sent from a worker
-
-  if (membersWithBirthday.length > 0) {
-    const individualLimit = 30;
-    const promises = [];
-
-    const individualMembers = membersWithBirthday.slice(0, individualLimit);
-    for (const member of individualMembers) {
-      const wish = composeSMS.birthday(member.name);
-      promises.push(sendSMS(wish, member.phone));
-    }
-
-    if (membersWithBirthday.length > individualLimit) {
-      const bulkMembers = membersWithBirthday.slice(individualLimit);
-      const phoneNumbers = bulkMembers.map((m) => m.phone);
-      const wish = composeSMS.birthday("member");
-      promises.push(sendBulkSMS(wish, phoneNumbers));
-    }
-
-    await Promise.allSettled(promises);
-  }
-
-  // TODO: send wishes for marriage anniversary
 };
 
 async function scheduled(

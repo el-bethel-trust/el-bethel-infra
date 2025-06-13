@@ -251,32 +251,19 @@ const bulkLockMembers = async (absenteesId: number[]) => {
   const BATCH_SIZE = 95;
 
   if (absenteesId.length === 0) {
-    console.log("No absentee members to lock.");
     return;
   }
-
-  console.log(
-    `Locking ${absenteesId.length} members in batches of ${BATCH_SIZE}...`,
-  );
 
   for (let i = 0; i < absenteesId.length; i += BATCH_SIZE) {
     const chunk = absenteesId.slice(i, i + BATCH_SIZE);
 
     if (chunk.length > 0) {
-      try {
-        await db
-          .update(schema.members)
-          .set({ is_locked: true })
-          .where(inArray(schema.members.id, chunk));
-
-        console.log(`Successfully locked a batch of ${chunk.length} members.`);
-      } catch (error) {
-        console.error("Failed to lock a batch of members:", error);
-      }
+      await db
+        .update(schema.members)
+        .set({ is_locked: true })
+        .where(inArray(schema.members.id, chunk));
     }
   }
-
-  console.log("Finished locking all absentee members.");
 };
 
 const wipeAttendanceTimes = async () => {
