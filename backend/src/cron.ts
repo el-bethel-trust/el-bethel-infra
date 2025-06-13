@@ -187,7 +187,7 @@ async function scheduled(
 		case "35 18 * * *":
 			await sendWishes();
 			break;
-		case "32 1 * * *":
+		case "57 1 * * *":
 		case "32 14 * * *":
 			log.info(
 				"post holy period automation takes place now",
