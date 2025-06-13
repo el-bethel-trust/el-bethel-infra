@@ -22,7 +22,8 @@
     "@ionic/pwa-elements": "^3.3.0",
     "axios": "^1.9.0",
     "lucide-preact": "^0.513.0",
-    "preact": "^10.26.5"
+    "preact": "^10.26.5",
+    "toastr": "^2.1.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
