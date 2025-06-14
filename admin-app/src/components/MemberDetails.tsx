@@ -175,7 +175,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
                 <option value="FEMALE">Female</option>
                 <option value="FUTURE">Future</option>
                 <option value="SUNDAY_CLASS_TEACHER">
-                  SUNDAY_CLASS_TEACHER
+                  Sunday class teacher
                 </option>
               </select>
             </div>
