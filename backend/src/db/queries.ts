@@ -192,17 +192,20 @@ const consumeLockQueue = async () => {
 			eq(schema.members.id, schema.unlockQueue.id),
 		);
 
-	await db
-		.update(schema.members)
-		.set({ is_locked: false })
-		.where(
-			inArray(
-				schema.members.id,
-				db.select({ id: schema.unlockQueue.id }).from(schema.unlockQueue),
+	await db.batch([
+		db
+			.update(schema.members)
+			.set({ is_locked: false })
+			.where(
+				inArray(
+					schema.members.id,
+					db.select({ id: schema.unlockQueue.id }).from(schema.unlockQueue),
+				),
 			),
-		);
 
-	await db.delete(schema.unlockQueue);
+		db.delete(schema.unlockQueue),
+	]);
+
 	return lockedMembers;
 };
 

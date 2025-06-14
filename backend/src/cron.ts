@@ -29,8 +29,19 @@ export const postHolyPeriodTask = async () => {
 			members: absenteeIds,
 		}),
 	});
-	const response = await sendLockSMS.text();
-	log.debug(response);
+	const lockSMSResponse = await sendLockSMS.text();
+
+	// send the copy of those sms to admin
+	const sendLockSMSReport = await fetch(
+		`${BULKSMS_PROXY_URL}/bulk-lock-report`,
+		{
+			method: "POST",
+			body: JSON.stringify({
+				members: absenteeIds,
+			}),
+		},
+	);
+	const lockSMSReportResponse = await sendLockSMSReport.text();
 };
 
 const batchUnlockMembersTask = async () => {
@@ -43,8 +54,19 @@ const batchUnlockMembersTask = async () => {
 			members: unlockedMembers,
 		}),
 	});
-	const response = await sendUnlockSMS.text();
-	log.debug(response);
+	const unlockSMSResponse = await sendUnlockSMS.text();
+
+	// send a copy of those sms to admin
+	const sendUnlockSMSReport = await fetch(
+		`${BULKSMS_PROXY_URL}/bulk-unlock-report`,
+		{
+			method: "POST",
+			body: JSON.stringify({
+				members: unlockedMembers,
+			}),
+		},
+	);
+	const unlockSMSReportResponse = await sendUnlockSMSReport.text();
 };
 
 const sendWishes = async () => {

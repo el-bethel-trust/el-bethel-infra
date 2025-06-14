@@ -106,6 +106,10 @@ app.put("/members/:id", async (c) => {
 		);
 		// TODO: handle failure here maybe?
 		const sendLockMessage = await sendSMS(lockMessage, updatedMember.phone);
+		const sendLockReportToAdmin = await sendSMS(
+			lockMessage,
+			c.env.ADMIN_CONTACT,
+		);
 	} else if (isPreviouslyLocked && !isNewlyLocked) {
 		const unlockMessage = composeSMS.unlock(
 			updatedMember.stream,
@@ -113,6 +117,10 @@ app.put("/members/:id", async (c) => {
 		);
 		// TODO: handle failure here maybe?
 		const sendUnlockMessage = await sendSMS(unlockMessage, updatedMember.phone);
+		const sendUnlockReportToAdmin = await sendSMS(
+			unlockMessage,
+			c.env.ADMIN_CONTACT,
+		);
 	}
 
 	return c.json(updatedMember, 200);

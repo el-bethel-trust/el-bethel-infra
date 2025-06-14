@@ -63,9 +63,9 @@ app.post("/checkpoint", async (c) => {
 			return c.json(playControl("please-unlock.mp3"), 200);
 		}
 
-		// if the member already did their attendance well and good, and if they try again, we cut them
+		// if the member already did their attendance well and good, and if they try again, we play the audio again
 		if (member.attendance_start_time && member.attendance_end_time) {
-			return c.json(hangupControl());
+			return c.json(playControl("attendance-confirmation.mp3"), 200);
 		}
 
 		const isPrayerTime = isPrayerPeriod();
@@ -81,7 +81,24 @@ app.post("/checkpoint", async (c) => {
 
 			// TODO: handle failure here maybe?
 			const sendAcknowledgement = await sendSMS(acknowledgement, phone);
+			const sendAcknowledgementToAdmin = await sendSMS(
+				acknowledgement,
+				c.env.ADMIN_CONTACT,
+			);
 
+			return c.json(playControl("attendance-acknowledgement.mp3"), 200);
+		}
+
+		const now = currentISTime();
+
+		const timeSinceFirstCallMs =
+			now.getTime() - member.attendance_start_time.getTime();
+		const timeSinceFirstCallMinutes = timeSinceFirstCallMs / (1000 * 60);
+
+		const redialGracePeriodMinutes = Number(c.env.REDIAL_GRACE_ALLOWANCE || 2);
+
+		if (timeSinceFirstCallMinutes < redialGracePeriodMinutes) {
+			// User redialed quickly. Play acknowledgement again and do not lock.
 			return c.json(playControl("attendance-acknowledgement.mp3"), 200);
 		}
 
@@ -94,7 +111,7 @@ app.post("/checkpoint", async (c) => {
 			: Number(c.env.BIBLE_READING_GRACE_ALLOWANCE);
 
 		const memberAttendanceStartTime = member.attendance_start_time;
-		const memberAttendanceEndTime = currentISTime();
+		const memberAttendanceEndTime = now;
 
 		if (
 			isAttendanceFulfilled(
@@ -113,6 +130,10 @@ app.post("/checkpoint", async (c) => {
 
 			// TODO: handle failure here maybe?
 			const sendConfirmation = await sendSMS(confirmation, phone);
+			const sendConfirmationReportToAdmin = await sendSMS(
+				confirmation,
+				c.env.ADMIN_CONTACT,
+			);
 			return c.json(playControl("attendance-confirmation.mp3"), 200);
 		}
 
@@ -121,6 +142,10 @@ app.post("/checkpoint", async (c) => {
 
 		// TODO: handle failure here maybe?
 		const sendLockMessage = await sendSMS(lockMessage, phone);
+		const sendLockReportToAdmin = await sendSMS(
+			lockMessage,
+			c.env.ADMIN_CONTACT,
+		);
 		return c.json(playControl("please-unlock.mp3"), 200);
 	}
 	const askForUnlocking: GatherControl = {
