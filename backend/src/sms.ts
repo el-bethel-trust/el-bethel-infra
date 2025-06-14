@@ -65,6 +65,7 @@ const streamMap: Record<Stream, string> = {
 	MALE: "Boys",
 	FEMALE: "Girls",
 	FUTURE: "Future",
+	SUNDAY_CLASS_TEACHER: "Sunday Class Teachers",
 };
 
 const attendanceAcknowledgement = (

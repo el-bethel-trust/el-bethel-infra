@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers";
 import log from "loglevel";
 import type { HangupControl, PlayControl, Stream } from "./types";
 
-log.setLevel(env.LOG_LEVEL || "DEBUG");
+log.setLevel(env.LOG_LEVEL || log.levels.DEBUG);
 
 const playControl = (fileName: string) => {
 	const play: PlayControl = {
@@ -88,6 +88,8 @@ const getStreamFromDTMF = (dtmf: number): Stream | null => {
 			return "FEMALE";
 		case 3:
 			return "FUTURE";
+		case 4:
+			return "SUNDAY_CLASS_TEACHER";
 		default:
 			return null;
 	}

@@ -1,4 +1,4 @@
-type Stream = "MALE" | "FEMALE" | "FUTURE";
+type Stream = "MALE" | "FEMALE" | "FUTURE" | "SUNDAY_CLASS_TEACHER";
 type DailyVerse = "SMALL" | "MEDIUM" | "LARGE";
 
 interface HangupControl {

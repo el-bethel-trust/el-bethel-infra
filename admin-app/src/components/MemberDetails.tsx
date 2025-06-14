@@ -1,9 +1,9 @@
-import { FunctionalComponent } from 'preact';
-import { useState, useEffect } from 'preact/hooks';
-import { Save, Trash2, Loader2 } from 'lucide-preact';
-import { LockedSwitch } from './LockedSwitch';
-import type { DailyVerse, Member, Stream } from '../types';
-import { showToast } from '../utils';
+import { FunctionalComponent } from "preact";
+import { useState, useEffect } from "preact/hooks";
+import { Save, Trash2, Loader2 } from "lucide-preact";
+import { LockedSwitch } from "./LockedSwitch";
+import type { DailyVerse, Member, Stream } from "../types";
+import { showToast } from "../utils";
 
 interface MemberDetailsProps {
   member: Member | null;
@@ -15,9 +15,9 @@ interface MemberDetailsProps {
 
 const EMPTY_MEMBER: Member = {
   id: -1,
-  name: '',
-  phone: '',
-  stream: 'MALE',
+  name: "",
+  phone: "",
+  stream: "MALE",
   dob: null,
   dom: null,
   address: null,
@@ -43,30 +43,30 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
 
   const handleSave = async () => {
     if (!editedMember.name.trim() || !editedMember.phone.trim()) {
-      await showToast('Name and phone are required fields');
+      await showToast("Name and phone are required fields");
       return;
     }
 
     if (!editedMember.stream.trim()) {
-      await showToast('Stream is required field');
+      await showToast("Stream is required field");
       return;
     }
 
     if (!editedMember.min_prayer_time && !editedMember.min_bible_reading_time) {
       await showToast(
-        'minimum prayer and bible reading time need to be atleast 1 minute',
+        "minimum prayer and bible reading time need to be atleast 1 minute",
       );
       return;
     }
 
-    if (!editedMember.phone.trim().startsWith('+91')) {
+    if (!editedMember.phone.trim().startsWith("+91")) {
       editedMember.phone = `+91${editedMember.phone.trim()}`;
     }
 
     for (const key in editedMember) {
       if (
         (editedMember as { [key: string]: any }).hasOwnProperty(key) &&
-        typeof (editedMember as { [key: string]: any })[key] === 'string'
+        typeof (editedMember as { [key: string]: any })[key] === "string"
       ) {
         (editedMember as { [key: string]: any })[key] = (
           editedMember as { [key: string]: any }
@@ -80,7 +80,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
       await onSave(editedMember);
       isSuccess = true; // Mark as successful if the promise resolves
     } catch (err: any) {
-      await showToast(err.message || 'Failed to save member.');
+      await showToast(err.message || "Failed to save member.");
       isSuccess = false; // Mark as failed
     } finally {
       // This will ALWAYS run before the component can unmount
@@ -107,7 +107,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
         <div className="sticky top-0 bg-white border-b px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-              {isCreating ? 'Create New Member' : 'Member Details'}
+              {isCreating ? "Create New Member" : "Member Details"}
             </h2>
             <button
               onClick={onClose}
@@ -161,7 +161,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
                 Stream *
               </label>
               <select
-                value={editedMember.stream || ''}
+                value={editedMember.stream || ""}
                 onChange={(e) =>
                   setEditedMember({
                     ...editedMember,
@@ -174,6 +174,9 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
                 <option value="MALE">Male</option>
                 <option value="FEMALE">Female</option>
                 <option value="FUTURE">Future</option>
+                <option value="SUNDAY_CLASS_TEACHER">
+                  SUNDAY_CLASS_TEACHER
+                </option>
               </select>
             </div>
 
@@ -182,7 +185,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
                 Daily Verse Type
               </label>
               <select
-                value={editedMember.daily_verse || ''}
+                value={editedMember.daily_verse || ""}
                 onChange={(e) =>
                   setEditedMember({
                     ...editedMember,
@@ -205,7 +208,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
               </label>
               <input
                 type="date"
-                value={editedMember.dob || ''}
+                value={editedMember.dob || ""}
                 onChange={(e) =>
                   setEditedMember({
                     ...editedMember,
@@ -222,7 +225,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
               </label>
               <input
                 type="date"
-                value={editedMember.dom || ''}
+                value={editedMember.dom || ""}
                 onChange={(e) =>
                   setEditedMember({
                     ...editedMember,
@@ -239,7 +242,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
               </label>
               <input
                 type="number"
-                value={editedMember.min_prayer_time ?? ''}
+                value={editedMember.min_prayer_time ?? ""}
                 onChange={(e) =>
                   setEditedMember({
                     ...editedMember,
@@ -259,7 +262,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
               </label>
               <input
                 type="number"
-                value={editedMember.min_bible_reading_time ?? ''}
+                value={editedMember.min_bible_reading_time ?? ""}
                 onChange={(e) =>
                   setEditedMember({
                     ...editedMember,
@@ -278,7 +281,7 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
                 Address
               </label>
               <textarea
-                value={editedMember.address || ''}
+                value={editedMember.address || ""}
                 onChange={(e) =>
                   setEditedMember({
                     ...editedMember,
@@ -311,10 +314,10 @@ export const MemberDetails: FunctionalComponent<MemberDetailsProps> = ({
                 <Save className="w-4 h-4 mr-2" />
               )}
               {isSaving
-                ? 'Saving...'
+                ? "Saving..."
                 : isCreating
-                  ? 'Create Member'
-                  : 'Save Changes'}
+                  ? "Create Member"
+                  : "Save Changes"}
             </button>
             {!isCreating && onDelete && (
               <button

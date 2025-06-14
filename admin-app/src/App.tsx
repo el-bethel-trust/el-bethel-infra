@@ -1,31 +1,32 @@
-import './App.css';
+import "./App.css";
 
-import { useState, useEffect } from 'preact/hooks';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { TabNavigation } from './components/TabNavigation';
-import { MemberList } from './components/MemberList';
-import { SubAdminTab } from './components/SubAdminTab';
-import { MemberDetails } from './components/MemberDetails';
-import type { Member, SubAdmins, StreamFilter } from './types';
-import { PinAuth } from './components/PinAuth';
-import { showToast } from './utils';
-import * as api from './api';
+import { useState, useEffect } from "preact/hooks";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import { TabNavigation } from "./components/TabNavigation";
+import { MemberList } from "./components/MemberList";
+import { SubAdminTab } from "./components/SubAdminTab";
+import { MemberDetails } from "./components/MemberDetails";
+import type { Member, SubAdmins, StreamFilter } from "./types";
+import { PinAuth } from "./components/PinAuth";
+import { showToast } from "./utils";
+import * as api from "./api";
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'members' | 'subadmins'>(
-    'members',
+  const [activeTab, setActiveTab] = useState<"members" | "subadmins">(
+    "members",
   );
   const [activeStreamFilter, setActiveStreamFilter] =
-    useState<StreamFilter>('ALL');
+    useState<StreamFilter>("ALL");
   const [members, setMembers] = useState<Member[]>([]);
   const [subAdmins, setSubAdmins] = useState<SubAdmins>({
     MALE: null,
     FEMALE: null,
     FUTURE: null,
+    SUNDAY_CLASS_TEACHER: null,
   });
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isCreatingMember, setIsCreatingMember] = useState(false);
 
@@ -48,7 +49,7 @@ export default function App() {
         setMembers(fetchedMembers);
         setSubAdmins(fetchedSubAdmins);
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch initial data.');
+        setError(err.message || "Failed to fetch initial data.");
       } finally {
         setIsLoading(false);
       }
@@ -84,7 +85,7 @@ export default function App() {
         .filter(([_, id]) => id === memberId)
         .map(([stream]) => stream);
       await showToast(
-        `This member is a sub-admin for: ${streams.join(', ')}. Please assign different sub-admins for these streams before deleting.`,
+        `This member is a sub-admin for: ${streams.join(", ")}. Please assign different sub-admins for these streams before deleting.`,
       );
       return;
     }
@@ -94,7 +95,7 @@ export default function App() {
       setMembers(members.filter((m) => m.id !== memberId));
       handleCloseModal();
     } catch (err: any) {
-      await showToast(err.message || 'Failed to delete member.');
+      await showToast(err.message || "Failed to delete member.");
     }
   };
 
@@ -137,7 +138,7 @@ export default function App() {
           )}
           {!isLoading && !error && (
             <>
-              {activeTab === 'members' ? (
+              {activeTab === "members" ? (
                 <MemberList
                   members={members}
                   activeStreamFilter={activeStreamFilter}

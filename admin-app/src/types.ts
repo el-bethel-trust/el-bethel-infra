@@ -1,5 +1,5 @@
-export type Stream = 'MALE' | 'FEMALE' | 'FUTURE';
-export type DailyVerse = 'SMALL' | 'MEDIUM' | 'LARGE';
+export type Stream = "MALE" | "FEMALE" | "FUTURE" | "SUNDAY_CLASS_TEACHER";
+export type DailyVerse = "SMALL" | "MEDIUM" | "LARGE";
 export type SubAdmins = Record<Stream, number | null>;
 
 export interface Member {
@@ -16,4 +16,4 @@ export interface Member {
   daily_verse: DailyVerse | null;
 }
 
-export type StreamFilter = 'ALL' | 'MALE' | 'FEMALE' | 'FUTURE' | 'LOCKED';
+export type StreamFilter = "ALL" | "LOCKED" | Stream;

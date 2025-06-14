@@ -7,7 +7,6 @@ import {
 } from "../db/queries";
 import {
 	checkHolyPeriod,
-	log,
 	getStreamFromDTMF,
 	currentISTime,
 	isPrayerPeriod,

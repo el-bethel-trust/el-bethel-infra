@@ -1,6 +1,6 @@
-import { FunctionalComponent } from 'preact';
-import { Phone, Lock, Unlock } from 'lucide-preact';
-import type { Member } from '../types';
+import { FunctionalComponent } from "preact";
+import { Phone, Lock, Unlock } from "lucide-preact";
+import type { Member } from "../types";
 
 interface MemberCardProps {
   member: Member;
@@ -13,14 +13,16 @@ export const MemberCard: FunctionalComponent<MemberCardProps> = ({
 }) => {
   const getStreamColor = (stream: string) => {
     switch (stream) {
-      case 'MALE':
-        return 'bg-blue-100 text-blue-800';
-      case 'FEMALE':
-        return 'bg-pink-100 text-pink-800';
-      case 'FUTURE':
-        return 'bg-purple-100 text-purple-800';
+      case "MALE":
+        return "bg-blue-100 text-blue-800";
+      case "FEMALE":
+        return "bg-pink-100 text-pink-800";
+      case "FUTURE":
+        return "bg-purple-100 text-purple-800";
+      case "SUNDAY_CLASS_TEACHER":
+        return "bg-green-100 text-green-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
